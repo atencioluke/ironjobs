@@ -1,0 +1,22 @@
+PATH
+  remote: .
+  specs:
+    Ironjobs (0.1.0)
+      require_all
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rake (10.4.2)
+    require_all (2.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  Ironjobs!
+  bundler (~> 1.16)
+  rake (~> 10.0)
+
+BUNDLED WITH
+   1.16.1
