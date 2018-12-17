@@ -4,6 +4,7 @@ class Ironjobs::Controller
     end
 
     def welcome
+        #testing
         system "clear"
         puts "Welcome to IronJobs!"
         puts "--------------------"
@@ -53,7 +54,7 @@ class Ironjobs::Controller
 
       def expand
         puts "If you want to learn more about a position, enter it's number!"
-        
+
       end
 
 end
