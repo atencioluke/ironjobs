@@ -40,17 +40,23 @@ class Ironjobs::Jobs
     def self.search_by_profile
         data = open("https://jobs.github.com/positions.json?description=#{Ironjobs::User.user.language}&full_time=true&location=#{Ironjobs::User.user.location}").read
         @@list = JSON.parse(data)
-        binding.pry
         counter = 1
+        out = []
         @@list.each do |job|
-            puts "#{counter}. #{job["title"]}"
+            out << "#{counter}. #{job["title"]}"
             counter += 1
         end
+        out
     end
 
     def self.job_expand(input)
-        if (1..@@list.length).include?(input.to_i+1)
-            puts "shiza"
+        if (0..@@list.length).include?(input-1)
+            system "clear"
+            puts "#{"Job Title:".green} #{@@list[input-1]["title"]}"
+            puts "#{"Company:".green} #{@@list[input-1]["company"]}"
+            puts "#{"Job Location:".green} #{@@list[input-1]["location"]}"
+            puts "#{"Schedule:".green} #{@@list[input-1]["type"]}"
+            puts "#{"Description:".green} #{@@list[input-1]["description"].gsub(/<\/?[^>]*>/, "")}"
         end
     end
 
