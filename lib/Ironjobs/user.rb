@@ -1,6 +1,7 @@
 class Ironjobs::User
 
     attr_accessor :name, :title, :location, :job, :language, :schedule
+    attr_reader :list
     @@user = nil
 
     def initialize(name, title, location="boston", language)

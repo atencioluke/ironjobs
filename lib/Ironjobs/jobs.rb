@@ -3,9 +3,14 @@
 class Ironjobs::Jobs
     # extend Search
     @@list = nil
+    @@job = nil
     
     def self.list
         @@list
+    end
+
+    def self.job
+        @@job
     end
 
     def self.fetch(language="python",location="boston",schedule="true")
@@ -52,11 +57,15 @@ class Ironjobs::Jobs
     def self.job_expand(input)
         if (0..@@list.length).include?(input-1)
             system "clear"
-            puts "#{"Job Title:".green} #{@@list[input-1]["title"]}"
-            puts "#{"Company:".green} #{@@list[input-1]["company"]}"
-            puts "#{"Job Location:".green} #{@@list[input-1]["location"]}"
-            puts "#{"Schedule:".green} #{@@list[input-1]["type"]}"
-            puts "#{"Description:".green} #{@@list[input-1]["description"].gsub(/<\/?[^>]*>/, "")}"
+            puts "<-------------------------------------------------------------------------------------->".red
+            @@job = [
+            "#{"Job Title:".green} #{@@list[input-1]["title"]}",
+            "#{"Company:".green} #{@@list[input-1]["company"]}",
+            "#{"Job Location:".green} #{@@list[input-1]["location"]}",
+            "#{"Schedule:".green} #{@@list[input-1]["type"]}",
+            "#{"Description:".green} #{@@list[input-1]["description"].gsub(/<\/?[^>]*>/, "")}"
+            ]
+            puts @@job
         end
     end
 

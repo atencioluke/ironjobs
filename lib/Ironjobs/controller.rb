@@ -1,4 +1,5 @@
 class Ironjobs::Controller
+
     def call 
         self.welcome
     end
@@ -12,15 +13,22 @@ class Ironjobs::Controller
         puts "--------------------"
         self.initiate
     end
+
+    def help
+        puts "Below are a list of commands you can use!"
+        puts "Enter 'Profile' to view or alter your profile."
+        puts "Enter 'List' to view your list of saved jobs."
+        puts "Enter 'Search' to search for the perfect job for you."
+    end
     
-      def initiate
+    def initiate
         puts "What is your name?"
-        name = gets.chomp
+        name = gets.chomp.green
         puts "Okay, #{name}. What is your dream job title?"
         title = gets.chomp.to_s
-        puts "#{randomize("!")} Where do you want to work?"
+        puts "#{randomize("!")} What city do you want to work in?"
         location = gets.chomp.to_s
-        puts "Finally, wshat's your favorite programming language?"
+        puts "Finally, what's your favorite programming language?"
         language = gets.chomp.to_s
         system "clear"
         puts "#{randomize("!")} Let's find you that #{title} job you are dying to get."
@@ -34,13 +42,13 @@ class Ironjobs::Controller
         else
             self.search
         end
-      end
+    end
 
-      def new_user(name, title, location, language)
+    def new_user(name, title, location, language)
         Ironjobs::User.new(name, title, location, language)
-      end
+    end
 
-      def search 
+    def search 
         system "clear"
         puts "You can search through our database of jobs using programming language, job location, and schedule!"
         puts "**NOTE** If you don't want to specify one of these options, just enter 'skip'."
@@ -52,17 +60,34 @@ class Ironjobs::Controller
         schedule = gets.chomp.to_s
         Ironjobs::Jobs.fetch(language,location,schedule)
         expand
-      end
+    end
 
-      def expand(input)
+    def expand(input)
         puts "If you want to learn more about a position, enter it's number!"
         Ironjobs::Jobs.job_expand(input.split('').first.to_i)
-      end
+        save
+    end
 
-      def randomize(type)
+    def save
+        puts "If you want to save this job to your collection, enter 'save'. Otherwise, enter 'help'.".green
+        puts "<-------------------------------------------------------------------------------------->".red
+        response = gets.chomp.to_s
+        if response == 'save'
+            Ironjobs::User.user.save(Ironjobs::Jobs.job)
+            system "clear"
+        elsif response == 'help'
+            system "clear"
+            help
+        elsif
+            puts "You have to either enter 'save' or 'help'!".green
+            response = gets.chomp.to_s
+        end
+    end
+
+    def randomize(type)
         if type == "!"
             words = ["Fantastic!", "Outstanding!", "Incredible!", "Great!", "Very nice...", "Exceptional."]
-            words[rand]
+            words[rand(words.length-1)]
         end
     end
 
