@@ -12,9 +12,12 @@ class Ironjobs::Jobs
         @location = location if location != nil
         @schedule = schedule if schedule != nil
         @description = description if description != nil
-        @@all << self
+        @@all << self if !@@all.include?(self)
     end
 
+    def self.all
+        @@all
+    end
     # def self.create(title, company=nil, location=nil, schedule=nil, description=nil)
     #     job = self.new(title, company, location, schedule, description)
     # end

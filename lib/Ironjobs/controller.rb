@@ -3,66 +3,66 @@ class Ironjobs::Controller
         self.welcome
     end
 
-    def welcome
-        system "clear"
-        puts "Welcome to IronJobs!".light_blue
-        puts "--------------------"
-        puts "This application will allow you to search through a vast and current database of job openings across the United States!"
-        puts "But, before we get started... introduce yourself!"
-        puts "--------------------"
-        self.initiate
-    end
-
     def help
         system "clear"
         list = ["View or alter your profile",
             "View your list of saved jobs",
             "Search for a specific job",
             "Search for a job based off of your profile",
-            "View your history of job searches"]
+            "View your history of job searches",
+            "Quit"]
         prompt = TTY::Prompt.new
         input = prompt.select("Select command using arrow keys and press enter!".light_blue, list)
         case input
         when list[0]
-            Ironjobs::User.user.profile
+            self.profile
         when list[1]
             Ironjobs::User.user.list
         when list[2]
             self.search
         when list[3]
-            list(Ironjobs::API.fetch(Ironjobs::User.user.language,Ironjobs::User.user.location))
+            self.list(Ironjobs::API.fetch(Ironjobs::User.user.language,Ironjobs::User.user.location))
         when list[4]
-            history
+            self.history
+        when list[5]
+            self.quit
+        end
+    end
+
+    def profile
+        Ironjobs::User.user.profile
+        prompt = TTY::Prompt.new
+        input = prompt.select("You can go back to the help menu or quit", ["Help menu", "Quit program"])
+        case input
+        when "Help menu"
+            help
+        when "Quit program"
+            quit
         end
     end
    
     def history
-        #history of last 10 job expands
+        if Ironjobs::Jobs.all.length == 0
+            puts "You don't have any saved jobs yet!"
+        else
+            prompt = TTY::Prompt.new
+            input = prompt.select("Select command using arrow keys and press enter!".light_blue, Ironjobs::Jobs.all.map {|i| i.title})
+            expand(input)
+        end
     end
 
     def initiate
-        puts "What is your name?"
-        name = gets.chomp
-        puts "Okay, #{name.green}. What is your dream job title?"
-        title = gets.chomp.to_s
-        puts "#{randomize("!")} What's the nearest major city?"
-        location = gets.chomp.to_s
-        puts "Finally, what's your favorite programming language?"
-        language = gets.chomp.to_s
-        new_user(name, title, location, language)
+        # puts "What is your name?"
+        # name = gets.chomp
+        # puts "Okay, #{name.green}. What is your dream job title?"
+        # title = gets.chomp.to_s
+        # puts "#{randomize("!")} What's the nearest major city?"
+        # location = gets.chomp.to_s
+        # puts "Finally, what's your favorite programming language?"
+        # language = gets.chomp.to_s
+        # new_user(name, title, location, language)
+        new_user("Matt", "Software Engineer", "Boston", "Python")
         help
-        # system "clear"
-        # puts "#{randomize("!")} Let's find you that #{title} job you are dying to get."
-        
-        # puts "Do you want us to look for the perfect jobs based off your profile? Yes or no?"
-        # if gets.chomp.to_s.upcase == "yes".upcase
-        #     system "clear"
-        #     prompt = TTY::Prompt.new
-        #     input = prompt.select("Select job using arrow keys and press enter!", Ironjobs::API.search_by_profile)
-        #     expand(input)
-        # else
-        #     self.search
-        # end
     end
 
     def new_user(name, title, location, language)
@@ -90,24 +90,23 @@ class Ironjobs::Controller
 
     def expand(input)
         system "clear"
-        Ironjobs::API.job_expand(input.split('').first.to_i)
-        save?
+        job = Ironjobs::API.job_expand(input.split('').first.to_i)
+        save?(job)
     end
 
-    def save?
+    def save?(job)
         puts "If you want to save this job to your collection, enter 'save'. Otherwise, enter 'help'.".green
         puts "<-------------------------------------------------------------------------------------->".red
         response = gets.chomp.to_s
         if response == 'save'
-            Ironjobs::User.user.save(Ironjobs::Jobs.job)
-            system "clear"
-        elsif response == 'help'
+            puts Ironjobs::User.user.save(job)
+            help
+        else response == 'help'
             system "clear"
             help
-        elsif
-            puts "You have to either enter 'save' or 'help'!".green
-            response = gets.chomp.to_s
         end
+        puts "You have to either enter 'save' or 'help'!".green
+        response = gets.chomp.to_s
     end
 
     def randomize(type)
@@ -117,4 +116,32 @@ class Ironjobs::Controller
         end
     end
 
+    ## Welcome and Quit message methods
+
+    def welcome
+        system "clear"
+        puts "        
+      +-+-+-+-+-+-+-+-+
+      |I|r|o|n|j|o|b|s|
+      +-+-+-+-+-+-+-+-+
+        
+           WELCOME
+             
+             ".light_blue
+        puts "--------------------------------"
+        puts "This application will allow you
+ to search through a well kept
+  database of up to date job
+          offerings!
+        
+    Before we get started...
+      introduce yourself!".light_blue
+        puts "--------------------------------"
+        initiate
+    end
+
+    def quit
+        system "clear"
+        puts "Singing off. Thank you for using Ironjobs!".green
+    end
 end

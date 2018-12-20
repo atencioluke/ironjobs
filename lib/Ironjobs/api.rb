@@ -38,10 +38,8 @@ class Ironjobs::API
 
     
     def self.job_expand(input)
-        binding.pry
-        if (0..@@list.length).include?(input-1)
-            binding.pry
-            title = @@list[input-=1]["title"]
+        if (0..@@list.length).include?(input)
+            title = @@list[input]["title"]
             company = @@list[input]["company"]
             location = @@list[input]["location"]
             type = @@list[input]["type"]

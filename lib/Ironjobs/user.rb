@@ -13,10 +13,11 @@ class Ironjobs::User
     end
 
     def profile
-       puts @name
-       puts "Aspiring #{@title}"
-       puts @location
-       puts "I love #{@language}"
+    system "clear"
+       puts "   #{@name}"
+       puts "   #{@title}"
+       puts "   #{@location}"
+       puts "   #{@language}"
     end
 
     def self.user
