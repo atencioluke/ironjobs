@@ -1,7 +1,6 @@
 class Ironjobs::User
 
-    attr_accessor :name, :title, :location, :job, :language, :schedule
-    attr_reader :list
+    attr_accessor :name, :title, :location, :job, :language, :schedule, :list
     @@user = nil
 
     def initialize(name, title, location="boston", language)
@@ -11,6 +10,13 @@ class Ironjobs::User
         @language = language
         @list = []
         @@user = self
+    end
+
+    def profile
+       puts @name
+       puts "Aspiring #{@title}"
+       puts @location
+       puts "I love #{@language}"
     end
 
     def self.user

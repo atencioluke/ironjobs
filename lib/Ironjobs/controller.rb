@@ -1,6 +1,5 @@
 class Ironjobs::Controller
-
-    def call 
+    def call
         self.welcome
     end
 
@@ -15,33 +14,55 @@ class Ironjobs::Controller
     end
 
     def help
-        puts "Below are a list of commands you can use!"
-        puts "Enter 'Profile' to view or alter your profile."
-        puts "Enter 'List' to view your list of saved jobs."
-        puts "Enter 'Search' to search for the perfect job for you."
+        system "clear"
+        list = ["View or alter your profile",
+            "View your list of saved jobs",
+            "Search for a specific job",
+            "Search for a job based off of your profile",
+            "View your history of job searches"]
+        prompt = TTY::Prompt.new
+        input = prompt.select("Select command using arrow keys and press enter!".light_blue, list)
+        case input
+        when list[0]
+            Ironjobs::User.user.profile
+        when list[1]
+            Ironjobs::User.user.list
+        when list[2]
+            self.search
+        when list[3]
+            list(Ironjobs::API.fetch(Ironjobs::User.user.language,Ironjobs::User.user.location))
+        when list[4]
+            history
+        end
     end
-    
+   
+    def history
+        #history of last 10 job expands
+    end
+
     def initiate
         puts "What is your name?"
-        name = gets.chomp.green
-        puts "Okay, #{name}. What is your dream job title?"
+        name = gets.chomp
+        puts "Okay, #{name.green}. What is your dream job title?"
         title = gets.chomp.to_s
-        puts "#{randomize("!")} What city do you want to work in?"
+        puts "#{randomize("!")} What's the nearest major city?"
         location = gets.chomp.to_s
         puts "Finally, what's your favorite programming language?"
         language = gets.chomp.to_s
-        system "clear"
-        puts "#{randomize("!")} Let's find you that #{title} job you are dying to get."
         new_user(name, title, location, language)
-        puts "Do you want us to look for the perfect jobs based off your profile? Yes or no?"
-        if gets.chomp.to_s.upcase == "yes".upcase
-            system "clear"
-            prompt = TTY::Prompt.new
-            input = prompt.select("Select job using arrow keys and press enter!", Ironjobs::Jobs.search_by_profile)
-            expand(input)
-        else
-            self.search
-        end
+        help
+        # system "clear"
+        # puts "#{randomize("!")} Let's find you that #{title} job you are dying to get."
+        
+        # puts "Do you want us to look for the perfect jobs based off your profile? Yes or no?"
+        # if gets.chomp.to_s.upcase == "yes".upcase
+        #     system "clear"
+        #     prompt = TTY::Prompt.new
+        #     input = prompt.select("Select job using arrow keys and press enter!", Ironjobs::API.search_by_profile)
+        #     expand(input)
+        # else
+        #     self.search
+        # end
     end
 
     def new_user(name, title, location, language)
@@ -57,18 +78,23 @@ class Ironjobs::Controller
         puts "Where do you want to look?"
         location = gets.chomp.to_s
         puts "Do you want it to be full time?"
-        schedule = gets.chomp.to_s
-        Ironjobs::Jobs.fetch(language,location,schedule)
-        expand
+        full_time = gets.chomp.to_s.upcase
+        list(Ironjobs::API.fetch(language,location,full_time))
+    end
+
+    def list(fetch)
+        prompt = TTY::Prompt.new
+        input = prompt.select("Select job using arrow keys and press enter!", fetch)
+        expand(input)
     end
 
     def expand(input)
-        puts "If you want to learn more about a position, enter it's number!"
-        Ironjobs::Jobs.job_expand(input.split('').first.to_i)
-        save
+        system "clear"
+        Ironjobs::API.job_expand(input.split('').first.to_i)
+        save?
     end
 
-    def save
+    def save?
         puts "If you want to save this job to your collection, enter 'save'. Otherwise, enter 'help'.".green
         puts "<-------------------------------------------------------------------------------------->".red
         response = gets.chomp.to_s
