@@ -14,10 +14,25 @@ class Ironjobs::User
 
     def profile
     system "clear"
-       puts "   #{@name}"
-       puts "   #{@title}"
-       puts "   #{@location}"
-       puts "   #{@language}"
+       puts " "
+       puts "   Name: #{@name}".blue
+       puts "   Desired Job: #{@title}".blue
+       puts "   Location: #{@location}".blue
+       puts "   Favorite Programming Language: #{@language}".blue
+       puts " "
+    end
+
+    def fetch_by_profile
+        Ironjobs::API.fetch(@language,@location,"YES")
+        data = open("https://jobs.github.com/positions.json?description=#{Ironjobs::User.user.language}&full_time=true&location=#{Ironjobs::User.user.location}").read
+        @@list = JSON.parse(data)
+        counter = 1
+        out = []
+        @@list.each do |job|
+            out << "#{counter}. #{job["title"]}"
+            counter += 1
+        end
+        out
     end
 
     def self.user

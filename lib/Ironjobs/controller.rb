@@ -1,23 +1,23 @@
 class Ironjobs::Controller
+
     def call
         self.welcome
     end
 
     def help
-        system "clear"
         list = ["View or alter your profile",
             "View your list of saved jobs",
             "Search for a specific job",
             "Search for a job based off of your profile",
             "View your history of job searches",
-            "Quit"]
+            "exit"]
         prompt = TTY::Prompt.new
         input = prompt.select("Select command using arrow keys and press enter!".light_blue, list)
         case input
         when list[0]
             self.profile
         when list[1]
-            Ironjobs::User.user.list
+            puts Ironjobs::User.user.list
         when list[2]
             self.search
         when list[3]
@@ -25,26 +25,33 @@ class Ironjobs::Controller
         when list[4]
             self.history
         when list[5]
-            self.quit
+            self.exit
         end
     end
 
+    ##call puts in this method, not the user class
     def profile
         Ironjobs::User.user.profile
         prompt = TTY::Prompt.new
-        input = prompt.select("You can go back to the help menu or quit", ["Help menu", "Quit program"])
+        input = prompt.select("You can go back to the help menu or exit the proram.", ["Help menu", "Exit program"])
         case input
         when "Help menu"
-            help
-        when "Quit program"
-            quit
+            self.help
+        when "exit program"
+            self.exit
         end
     end
    
     def history
         if Ironjobs::Jobs.all.length == 0
-            puts "You don't have any saved jobs yet!"
+            system "clear"
+            puts "You don't have any saved jobs yet!
+            
+            ".light_blue
+            self.help
         else
+            system "clear"
+            ##Define the prompt gem instance in an instance variable
             prompt = TTY::Prompt.new
             input = prompt.select("Select command using arrow keys and press enter!".light_blue, Ironjobs::Jobs.all.map {|i| i.title})
             expand(input)
@@ -52,16 +59,16 @@ class Ironjobs::Controller
     end
 
     def initiate
-        # puts "What is your name?"
-        # name = gets.chomp
-        # puts "Okay, #{name.green}. What is your dream job title?"
-        # title = gets.chomp.to_s
-        # puts "#{randomize("!")} What's the nearest major city?"
-        # location = gets.chomp.to_s
-        # puts "Finally, what's your favorite programming language?"
-        # language = gets.chomp.to_s
-        # new_user(name, title, location, language)
-        new_user("Matt", "Software Engineer", "Boston", "Python")
+        puts "What is your name?"
+        name = gets.chomp
+        puts "Okay, #{name.green}. What is your dream job title?"
+        title = gets.chomp.to_s
+        puts "#{randomize("!")} What's the nearest major city?"
+        location = gets.chomp.to_s
+        puts "Finally, what's your favorite programming language?"
+        language = gets.chomp.to_s
+        new_user(name, title, location, language)
+        system "clear"
         help
     end
 
@@ -90,7 +97,8 @@ class Ironjobs::Controller
 
     def expand(input)
         system "clear"
-        job = Ironjobs::API.job_expand(input.split('').first.to_i)
+        ##fix the below code
+        job = Ironjobs::API.job_expand(input.split('').first.to_i).expand
         save?(job)
     end
 
@@ -100,6 +108,7 @@ class Ironjobs::Controller
         response = gets.chomp.to_s
         if response == 'save'
             puts Ironjobs::User.user.save(job)
+            system "clear"
             help
         else response == 'help'
             system "clear"
@@ -116,7 +125,7 @@ class Ironjobs::Controller
         end
     end
 
-    ## Welcome and Quit message methods
+    ## Welcome and exit message methods
 
     def welcome
         system "clear"
@@ -137,10 +146,10 @@ class Ironjobs::Controller
     Before we get started...
       introduce yourself!".light_blue
         puts "--------------------------------"
-        initiate
+        self.initiate
     end
 
-    def quit
+    def exit
         system "clear"
         puts "Singing off. Thank you for using Ironjobs!".green
     end
