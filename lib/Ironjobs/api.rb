@@ -19,10 +19,25 @@ class Ironjobs::API
         loc = "&location=#{location}"
         data = open("https://jobs.github.com/positions.json?#{desc}#{sched}#{loc}").read
         @@list = JSON.parse(data)
-        counter = 1
-        return @@list.collect do |job|
-            job["title"]
-        end
+        # return [{"title" => "Test title",
+        # "company" => "Test company",
+        # "location" => "Test location",
+        # "type" => "Test schedule",
+        # "description" => "Test description"},
+        # {"title" => "Test title",
+        # "company" => "Test company",
+        # "location" => "Test location",
+        # "type" => "Test schedule",
+        # "description" => "Test description"},
+        # {"title" => "Test title",
+        # "company" => "Test company",
+        # "location" => "Test location",
+        # "type" => "Test schedule",
+        # "description" => "Test description"}]
+        # counter = 1
+        # return @@list.collect do |job|
+        #     job["title"]
+        # end
     end
 
     ##Fetches a list fo jobs based off the parameters saved in the user profile when someone first launched the app.
@@ -41,14 +56,14 @@ class Ironjobs::API
     # end
 
     
-    def self.job_expand(input)
-        if (0..@@list.length).include?(input)
-            title = @@list[input]["title"]
-            company = @@list[input]["company"]
-            location = @@list[input]["location"]
-            type = @@list[input]["type"]
-            description = @@list[input]["description"].gsub(/<\/?[^>]*>/, "")
-            Ironjobs::Jobs.new(title, company, location, type, description)
-        end
-    end
+    # def self.job_expand(input)
+    #     if (0..@@list.length).include?(input)
+    #         title = @@list[input]["title"]
+    #         company = @@list[input]["company"]
+    #         location = @@list[input]["location"]
+    #         type = @@list[input]["type"]
+    #         description = @@list[input]["description"].gsub(/<\/?[^>]*>/, "")
+    #         Ironjobs::Jobs.new(title, company, location, type, description)
+    #     end
+    # end
 end
