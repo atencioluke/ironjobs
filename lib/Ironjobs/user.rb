@@ -13,13 +13,6 @@ class Ironjobs::User
 
     def user_profile
         [@name, @title, @location, @language]
-    # system "clear"
-    #    puts " "
-    #    puts "   Name: #{@name}".blue
-    #    puts "   Desired Job: #{@title}".blue
-    #    puts "   Location: #{@location}".blue
-    #    puts "   Favorite Programming Language: #{@language}".blue
-    #    puts " "
     end
 
     def fetch_by_profile
