@@ -27,8 +27,8 @@ class Ironjobs::Jobs
         @@all
     end
 
-    def fetch_by_profile
-        @recent_fetch = Ironjobs::API.fetch(@language,@location,"YES")
+    def self.fetch_by_search(language, location, full_time="YES")
+        @recent_fetch = Ironjobs::API.fetch(language,location,full_time.upcase)
         counter = 1
         out = []
         @recent_fetch.each do |job|

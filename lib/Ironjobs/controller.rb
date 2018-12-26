@@ -51,7 +51,8 @@ class Ironjobs::Controller
     def history
         if Ironjobs::Jobs.all.length == 0
             system "clear"
-            puts "You don't have any saved jobs yet!
+            puts "
+            You don't have any saved jobs yet!
             
             ".light_blue
             self.help
@@ -85,15 +86,15 @@ class Ironjobs::Controller
 
     def search 
         system "clear"
-        puts "You can search through our database of jobs using programming language, job location, and schedule!".light_blue
-        puts "**NOTE** If you don't want to specify one of these options, just enter 'skip'.".light_blue
-        puts "What programming language should the position use?".light_blue
-        language = gets.chomp.to_s
-        puts "Where do you want to look?"
-        location = gets.chomp.to_s
-        puts "Do you want it to be full time?"
-        full_time = gets.chomp.to_s.upcase
-        list(Ironjobs::API.fetch(language,location,full_time))
+            puts "You can search through our database of jobs using programming language, job location, and schedule!".light_blue
+            puts "**NOTE** If you don't want to specify one of these options, just enter 'skip'.".light_blue
+            puts "What programming language should the position use?".light_blue
+            language = gets.chomp.to_s
+            puts "Where do you want to look?"
+            location = gets.chomp.to_s
+            puts "Do you want it to be full time?"
+            full_time = gets.chomp.to_s.upcase
+        list(Ironjobs::Jobs.fetch_by_search(language,location,full_time))
     end
 
     def list(fetch)
