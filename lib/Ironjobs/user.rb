@@ -2,7 +2,7 @@ class Ironjobs::User
 
     attr_accessor :name, :title, :location, :job, :language, :schedule, :list
 
-    def initialize(name, title, location="boston", language)
+    def initialize(name, title, location, language)
         @name = name
         @title = title
         @location = location

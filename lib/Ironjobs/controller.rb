@@ -40,18 +40,17 @@ class Ironjobs::Controller
 
     #The initiate method will ask for the user's information to create an instance of the "User" class for storing job and user related info.
     def initiate
-        puts "What is your name?"
+        puts "What is your name?".green
             name = gets.chomp
-        puts "Okay, #{name.green}. What is your dream job title?"
+        puts "Okay, #{name}. What is your dream job title?".green
             title = gets.chomp.to_s
-        puts "#{randomize("!")} What's the nearest major city?"
+        puts "#{randomize("!")} What's the nearest major city?".green
             location = gets.chomp.to_s
-        puts "Finally, what's your favorite programming language?"
+        puts "Finally, what's your favorite programming language?".green
             language = gets.chomp.to_s
-        new_user(name, title, location, language)
-        # new_user("Matthew", "Software Engineer", "Boston", "Python")
+        self.new_user(name, title, location, language)
         system "clear"
-        help
+        self.help
     end
 
     #This method actually creates the instance for the new user and saves that user as the active user until the active user changes again.
@@ -92,12 +91,17 @@ class Ironjobs::Controller
 
     #This method simply displays the attributes set by the user.
     def user_profile
-        @active_user.user_profile
+        system "clear"
+        puts "Name: ".light_blue + @active_user.user_profile[0]
+        puts "Dream Job Title: ".light_blue + @active_user.user_profile[1]
+        puts "Location: ".light_blue + @active_user.user_profile[2]
+        puts "Favorite Programming Language: ".light_blue + @active_user.user_profile[3]
+        puts ""
         input = @prompt.select("You can go back to the help menu or exit the proram.", ["Help menu", "Exit program"])
         case input
         when "Help menu"
             self.help
-        when "exit program"
+        when "Exit program"
             self.exit
         end
     end
@@ -105,15 +109,14 @@ class Ironjobs::Controller
     #This method displays the jobs saved by the active user to their profile and allows the user to search through those jobs.
     def user_joblist
         if @active_user.list.length == 0
-            system "clear"
-            puts "
-            You have not saved any jobs to your profile yet!
+            system "clear
+            "
+            puts "You have not saved any jobs to your profile yet!
             
             ".light_blue
             self.help
         else
-            job = @prompt.select("Select job using arrow keys and press enter!", @active_user.list.map {|i| i.title})
-            self.job_expand(job)
+            list(@active_user.list.map {|i| i.title})
         end
     end
 
@@ -122,19 +125,17 @@ class Ironjobs::Controller
     def search 
         system "clear"
             puts "You can search through our database of jobs using programming language, job location, and schedule!".light_blue
-            puts "**NOTE** If you don't want to specify one of these options, just enter 'skip'.".light_blue
-            puts "What programming language should the position use?".light_blue
+            puts "What programming language should the position use?".green
             language = gets.chomp.to_s
-            puts "Where do you want to look?"
+            puts "Where do you want to look?".green
             location = gets.chomp.to_s
-            puts "Do you want it to be full time?"
+            puts "Do you want it to be full time?".green
             full_time = gets.chomp.to_s.upcase
         list(Ironjobs::Jobs.fetch_by_job(language,location,full_time))
     end
 
     #This method lists the jobs returned from search methods.
     def list(fetch)
-        binding.pry
         input = @prompt.select("Select job using arrow keys and press enter!", fetch)
         job_expand(input)
     end
@@ -142,16 +143,25 @@ class Ironjobs::Controller
     #This method will provide more in-depth details about a selected job from the list after a search was done. It checks to make sure 
     # that the selection is actually a part of the list.
     def job_expand(input)
-        input = input.split('').first.to_i
+        input = input.split('').first.to_i - 1
         system "clear"
         if (0..Ironjobs::API.list.length).include?(input)
-            job = Ironjobs::Jobs.create_job(Ironjobs::API.list, input)
+             job = Ironjobs::Jobs.create_job(Ironjobs::API.list, input)
                 puts "Title: ".light_blue + job.job_profile[0]
                 puts "Company: ".light_blue + job.job_profile[1]
                 puts "Location: ".light_blue + job.job_profile[2]
                 puts "Schedule: ".light_blue + job.job_profile[3]
                 puts "Description: ".light_blue + job.job_profile[4]
             self.save(job)
+        elsif @active_user.list.each {|i| i.title == input}
+            job = @active_user.list.each {|i| i.title == input}
+            puts "Title: ".light_blue + job[0].job_profile[0]
+            puts "Company: ".light_blue + job[0].job_profile[1]
+            puts "Location: ".light_blue + job[0].job_profile[2]
+            puts "Schedule: ".light_blue + job[0].job_profile[3]
+            puts "Description: ".light_blue + job[0].job_profile[4]
+            puts ""
+            self.help
         end
     end
 
@@ -197,6 +207,12 @@ class Ironjobs::Controller
     #The exit method will quit out of the application.
     def exit
         system "clear"
-        puts "Singing off. Thank you for using Ironjobs!".green
+        puts "Singing off. Thank you for using Ironjobs!
+        ".green
+        
+        
+        puts '"Its not that you stop hitting walls, you just get better at spotting the cracks."
+        - Dakota M.
+        '.green
     end
 end

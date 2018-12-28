@@ -7,7 +7,8 @@ require 'open-uri'
 require 'colorize'
 require 'pry'
 require 'tty-prompt'
-#It's not that you stop hitting walls, you just get better at spotting the cracks.
+
+
 module Ironjobs
   
 end

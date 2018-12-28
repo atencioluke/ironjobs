@@ -5,14 +5,7 @@ class Ironjobs::Jobs
 
     attr_accessor :title, :company, :location, :schedule, :description, :recent_fetch
     @@all = []
-    # @@list = []
-
-    # def self.list
-    #     @@list 
-    # end
-    # def self.list=(list)
-    #     @@list = list
-    # end
+    
     def initialize(title, company=nil, location=nil, schedule=nil, description=nil)
         @title = title
         @company = company if company != nil
