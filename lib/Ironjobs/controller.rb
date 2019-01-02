@@ -116,7 +116,16 @@ class Ironjobs::Controller
             ".light_blue
             self.help
         else
-            list(@active_user.list.map {|i| i.title})
+            input = @prompt.select("Select job using arrow keys and press enter!", @active_user.list.flatten.map {|i| i.title})
+            job = nil
+            @active_user.list.flatten.each {|i| job = i if i.title == input }
+                puts "Title: ".light_blue + job.job_profile[0]
+                puts "Company: ".light_blue + job.job_profile[1]
+                puts "Location: ".light_blue + job.job_profile[2]
+                puts "Schedule: ".light_blue + job.job_profile[3]
+                puts "Description: ".light_blue + job.job_profile[4]
+                puts ""
+            self.help
         end
     end
 
@@ -131,38 +140,31 @@ class Ironjobs::Controller
             location = gets.chomp.to_s
             puts "Do you want it to be full time?".green
             full_time = gets.chomp.to_s.upcase
-        list(Ironjobs::Jobs.fetch_by_job(language,location,full_time))
+        self.list(Ironjobs::Jobs.fetch_by_job(language,location,full_time))
     end
 
     #This method lists the jobs returned from search methods.
     def list(fetch)
         input = @prompt.select("Select job using arrow keys and press enter!", fetch)
-        job_expand(input)
+        self.job_expand(input)
     end
 
     #This method will provide more in-depth details about a selected job from the list after a search was done. It checks to make sure 
     # that the selection is actually a part of the list.
     def job_expand(input)
         input = input.split('').first.to_i - 1
+        job = []
         system "clear"
         if (0..Ironjobs::API.list.length).include?(input)
-             job = Ironjobs::Jobs.create_job(Ironjobs::API.list, input)
-                puts "Title: ".light_blue + job.job_profile[0]
-                puts "Company: ".light_blue + job.job_profile[1]
-                puts "Location: ".light_blue + job.job_profile[2]
-                puts "Schedule: ".light_blue + job.job_profile[3]
-                puts "Description: ".light_blue + job.job_profile[4]
-            self.save(job)
-        elsif @active_user.list.each {|i| i.title == input}
-            job = @active_user.list.each {|i| i.title == input}
-            puts "Title: ".light_blue + job[0].job_profile[0]
-            puts "Company: ".light_blue + job[0].job_profile[1]
-            puts "Location: ".light_blue + job[0].job_profile[2]
-            puts "Schedule: ".light_blue + job[0].job_profile[3]
-            puts "Description: ".light_blue + job[0].job_profile[4]
-            puts ""
-            self.help
+            job << Ironjobs::Jobs.create_job(Ironjobs::API.list, input)
+            job = job.flatten
         end
+        puts "Title: ".light_blue + job[0].job_profile[0]
+        puts "Company: ".light_blue + job[0].job_profile[1]
+        puts "Location: ".light_blue + job[0].job_profile[2]
+        puts "Schedule: ".light_blue + job[0].job_profile[3]
+        puts "Description: ".light_blue + job[0].job_profile[4]
+        self.save(job)
     end
 
     #This method will save the selected job to the active user's profile (instance).

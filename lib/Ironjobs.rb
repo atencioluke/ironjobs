@@ -10,5 +10,5 @@ require 'tty-prompt'
 
 
 module Ironjobs
-  
+
 end
