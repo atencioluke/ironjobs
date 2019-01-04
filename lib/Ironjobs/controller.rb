@@ -152,7 +152,7 @@ class Ironjobs::Controller
     #This method will provide more in-depth details about a selected job from the list after a search was done. It checks to make sure 
     # that the selection is actually a part of the list.
     def job_expand(input)
-        input = input.split('').first.to_i - 1
+        input = input.split('.').first.to_i - 1
         job = []
         system "clear"
         if (0..Ironjobs::API.list.length).include?(input)
